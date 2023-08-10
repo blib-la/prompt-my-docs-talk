@@ -5,7 +5,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-	<title>reveal.js</title>
+	<title>Prompt my Docs - ChatGPT for your own data</title>
 
 	<link rel="stylesheet" href="dist/reset.css">
 	<link rel="stylesheet" href="dist/reveal.css">
@@ -878,7 +878,7 @@
 						`
 
 						// Find documents that are similar to the question
-						const relatedDocs = await store.searchNearText("DocumentClass", "content", [userMessage.question], {
+						const relatedDocs = await store.searchNearText("Hyv", "content", [userMessage.question], {
 							distance: 0.24,
 							limit: 2,
 						});

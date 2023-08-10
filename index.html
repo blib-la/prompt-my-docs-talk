@@ -878,7 +878,7 @@
 						`
 
 						// Find documents that are similar to the question
-						const relatedDocs = await store.searchNearText("DocumentClass", "content", [userMessage.question], {
+						const relatedDocs = await store.searchNearText("Hyv", "content", [userMessage.question], {
 							distance: 0.24,
 							limit: 2,
 						});
