@@ -306,6 +306,7 @@ gulp.task(
 					"./images/**",
 					"./plugin/**",
 					"./**/*.md",
+					"./assets/**",
 				],
 				{ base: "./" }
 			)
