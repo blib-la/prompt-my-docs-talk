@@ -123,11 +123,19 @@ Detailed: "One limitation is the knowledge cutoff of the AI model, which may not
 High-Level: "Our tool may not have the latest information on very new or niche tools due to the knowledge cutoff of the AI model."
 
 
+
+
+
+
 Slide 18: Graphic or text slide discussing the dependency on documentation and code comments.
 
 Detailed: "The system also relies on the quality and comprehensiveness of the package's documentation and code comments. If these are lacking, it may limit the utility of 'Prompt my Docs'."
 High-Level: "If the package's documentation or code comments are lacking, it could limit how much our tool can help."
 Outro
+
+
+
+
 
 
 Slide 19: Contact information and an invitation for consulting services.
