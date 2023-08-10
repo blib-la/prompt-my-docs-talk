@@ -1,0 +1,1124 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>reveal.js</title>
+
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/black.css">
+
+	<!-- Theme used for syntax highlighted code -->
+	<link rel="stylesheet" href="plugin/highlight/atom-one-dark.css">
+
+	<!-- add inline style with :root -->
+	<style>
+		:root {
+			--r-main-font-size: 2.75em;
+			--r-heading1-text-shadow: 5px 5px 0px #000000;
+			--r-heading-text-shadow: 2px 0px 0px #000000;
+
+			--main-bg-lightness: 35%;
+			--main-bg-saturation: 100%;
+			--main-bg-opacity: 0.75;
+
+			--toast-color: #000;
+			--toast-bg: rgba(255, 255, 255, 0.5);
+			--toast-size: 1.5em;
+			--toast-font: var(--r-heading-font);
+			--toast-font-weight: normal;
+			--toast-line-height: 1.0;
+			--toast-letter-spacing: normal;
+			--toast-text-transform: none;
+
+			--toast-link-color: #000;
+			--toast-link-text-decoration: underline;
+			--toast-link-hover-color: #0056b3;
+			--toast-link-hover-text-decoration: none;
+		}
+
+		h5 {
+			font-size: 4rem !important;
+			text-transform: none !important;
+		}
+
+		table {
+			font-size: 0.65em;
+		}
+
+		.grid-container {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 20px;
+			height: 100%;
+		}
+
+		.grid-item {
+			padding: 10px;
+			height: 100%;
+			background-position: center;
+			background-repeat: no-repeat;
+			background-size: cover;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+		}
+
+		.stack {
+			height: 100%;
+			background-position: center;
+			background-repeat: no-repeat;
+			background-size: cover;
+			display: flex;
+			align-items: start;
+			justify-content: center;
+			flex-direction: column;
+			gap: 0.5rem;
+		}
+
+		.stack.vertical {
+			flex-direction: row;
+		}
+
+		.stack.gap-xl {
+			gap: 1rem;
+		}
+
+		.stack>div {
+			width: 100%;
+		}
+
+		.spacer {
+			height: 20vh;
+			width: 100%;
+		}
+
+		.mark {
+			padding: 0 .5rem;
+			display: block;
+			background: rgba(0, 0, 0, .75);
+			filter: none !important;
+			border: 1px solid transparent;
+			border-image: linear-gradient(to bottom right,
+					hsla(281, var(--main-bg-saturation), var(--main-bg-lightness), var(--main-bg-opacity)) 0%,
+					hsla(211, var(--main-bg-saturation), var(--main-bg-lightness), var(--main-bg-opacity)) 25%,
+					hsla(80, var(--main-bg-saturation), var(--main-bg-lightness), var(--main-bg-opacity)) 50%,
+					hsla(44, var(--main-bg-saturation), var(--main-bg-lightness), var(--main-bg-opacity)) 75%,
+					hsla(328, var(--main-bg-saturation), var(--main-bg-lightness), var(--main-bg-opacity)) 100%);
+			border-image-slice: 1;
+		}
+
+		h2,
+		.mark2 {
+			padding: 1rem;
+			text-shadow: 0 0 10px #444 !important;
+			color: #fff;
+
+			background: linear-gradient(to bottom right,
+					hsla(281, var(--main-bg-saturation), var(--main-bg-lightness), var(--main-bg-opacity)) 0%,
+					hsla(211, var(--main-bg-saturation), var(--main-bg-lightness), var(--main-bg-opacity)) 25%,
+					hsla(80, var(--main-bg-saturation), var(--main-bg-lightness), var(--main-bg-opacity)) 50%,
+					hsla(44, var(--main-bg-saturation), var(--main-bg-lightness), var(--main-bg-opacity)) 75%,
+					hsla(328, var(--main-bg-saturation), var(--main-bg-lightness), var(--main-bg-opacity)) 100%);
+		}
+
+		.toast {
+			display: none;
+		}
+
+		.fragment.realhighlight.visible.current-fragment {
+			text-shadow: 0 0 8px #333 !important;
+			color: #fff;
+
+			background: linear-gradient(to bottom right,
+					hsla(281, var(--main-bg-saturation), calc(var(--main-bg-lightness) * .5), var(--main-bg-opacity)) 0%,
+					hsla(211, var(--main-bg-saturation), calc(var(--main-bg-lightness) * .5), var(--main-bg-opacity)) 25%,
+					hsla(80, var(--main-bg-saturation), calc(var(--main-bg-lightness) * .5), var(--main-bg-opacity)) 50%,
+					hsla(44, var(--main-bg-saturation), calc(var(--main-bg-lightness) * .5), var(--main-bg-opacity)) 75%,
+					hsla(328, var(--main-bg-saturation), calc(var(--main-bg-lightness) * .5), var(--main-bg-opacity)) 100%);
+		}
+
+		.surface {
+			background: rgba(0, 0, 0, .5);
+			filter: drop-shadow(0 0 20px rgb(214 44 216));
+			padding: 1rem;
+		}
+
+		.surface-dark {
+			background: rgba(0, 0, 0, .5);
+			filter: drop-shadow(0 0 20px hsl(299, 69%, 21%));
+			padding: 1rem;
+		}
+
+		ul {
+			list-style: none !important;
+		}
+
+		.mx {
+			margin-left: 3rem !important;
+			margin-right: 3rem !important;
+		}
+
+		.my {
+			margin-top: 3rem !important;
+			margin-bottom: 3rem !important;
+		}
+
+		.hljs {
+			background: rgba(30, 30, 30, 1.0);
+		}
+
+		.code>.code-wrapper {
+			filter: drop-shadow(0 0 20px rgb(214 44 216));
+		}
+
+
+		.mermaid .nodeLabel {
+			line-height: 1;
+			vertical-align: super;
+		}
+
+		.al {
+			text-align: left;
+		}
+
+		/* .mermaid .node rect {
+			stroke: #f00 !important;
+		} */
+	</style>
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides" id="slides">
+			<section data-background-image="assets/intro.jpg">
+				<h1 class="r-fit-text">Prompt my Docs</h1>
+				<!-- <h4 class="r-fit-text"></h4> -->
+				<aside class="notes">
+				</aside>
+			</section>
+
+			<!-- <section data-background-image="assets/dinosaurs.jpg">
+				<div class="stack">
+					<div class="fragment mark">🕴 Stand up or 🐒 stay seaten!</div>
+					<div class="fragment mark">🗣 Breath in... 🌬 exhale...</div>
+					<div class="fragment mark">↺ Circle your shoulders</div>
+					<div class="fragment mark">🙌 Raise your hands up high 🙆‍♀️ stretch</div>
+					<div class="fragment mark">🌪 Shake your body 🌪<br />🦾 👂👁👄👁👂
+						🤳<br />&nbsp;&nbsp;🦵&nbsp;🦿&nbsp;&nbsp;</div>
+				</div>
+
+				<aside class="notes">
+					<ul>
+						<li>Have you ever had an "ice breaker meeting"? Well, if not, then you will have one right now!
+							Break the ice and shake things up, shall we?</li>
+					</ul>
+					<ul>
+						<li>Stand up or stay seaten: What ever works for you!</li>
+						<li>Feels good, right? Let's get started!</li>
+					</ul>
+				</aside>
+			</section> -->
+
+			<!-- <section data-background-image="assets/intro.jpg">
+				<h1 class="r-fit-text">Prompt my Docs</h1>
+				<h4 class="fragment r-fit-text">⌨️ A Tale of a developer 🖥</h4>
+				<aside class="notes">
+				</aside>
+			</section> -->
+
+			<section data-background-image="assets/developer.jpg">
+				<aside class="notes">
+					<ul>
+						<li>We are writing the year 2023, a developer sits in their home-office, working on a
+							project
+						</li>
+						<li>The tea to them has drinking temperature, the sun is shinging, their mood is awesome
+						</li>
+						<li>You will have lunch with friends at the vegan restaraunt that you love</li>
+						<li>At 9pm you will play a round of Diablo 4 online with your friends</li>
+					</ul>
+
+					<ul>
+						<li>Your tool of choice is of course ChatGPT and you use it since it becamce famous and
+							accepted
+							the hallucinated content. With GPT-4 everything is
+							very much perfect</li>
+						<li>Write the documentation for random project or create a Businessplan for my start up or
+							generate the whole "Prompt my Docs"-talk </li>
+					</ul>
+
+					<ul>
+						<li>You are working on a JavaScript project and want to use a package to integrate GPT from
+							OpenAI to OpenAI
+							to inte called hyv</li>
+					</ul>
+				</aside>
+			</section>
+
+			<section data-background-image="assets/hyv.png">
+
+				<h2 class="fragment mark2">ChatGPT</h2>
+
+				<div class="toast">
+					<a href="https://github.com/failfa-st/hyv" target="_blank">github.com/failfa-st/hyv</a>
+				</div>
+
+				<aside class="notes">
+					<ul>
+						<li>You ask ChatGPT with GPT-4: Getting started guide for hyv with a config for GPT-4, so
+							that I can use GPT-4 to get the answer to my question “what is the meaning of life” and
+							see the result printed to the console. Please use ESM syntax.</li>
+						<li>GPT is answering: I have no idea what hyv is, I can't help you mate!</li>
+						<li>Suddenly, your room starts to shake like an earth quake, you smell smoke</li>
+					</ul>
+				</aside>
+			</section>
+
+			<section data-background-image="assets/explosion_screens.jpg">
+				<h2 class="fragment">Knowledge cutoff in September 2021</h2>
+				<aside class="notes">
+					<ul>
+						<li>BOOM, your room explodes, fire everyhwere, glass splitter cutting through the air, a
+							thunderstorm approaches</li>
+						<li>But this only happened in your head. The actual thing is the message in ChatGPT:</li>
+
+						<li>You found a great new npm package, but it was released or upgraded after the
+							knowledge cutoff of our trusted AI assistant</li>
+					</ul>
+				</aside>
+			</section>
+
+			<section data-background-video="assets/prompt_my_docs_in_action.mp4">
+				<aside class="notes">
+					<ul>
+						<li>We want to keep the joy of interacting with ChatGPT.</li>
+						<li>Enter 'Prompt my Docs'. Let's see it in action.</li>
+						<li>Our solution, 'Prompt my Docs', makes it easier to understand and use new tools or packages.
+						</li>
+					</ul>
+				</aside>
+			</section>
+
+
+
+			<section data-background-image="assets/brain_with_books.jpg">
+				<h3 class="mark2">In-Context Retrieval-Augmented Language Models</h3>
+				<div class="fragment mark">retrieval-augmented</div>
+				<div class="toast"><a href="https://arxiv.org/abs/2302.00083">arxiv.org/abs/2302.00083</a></div>
+				<aside class="notes">
+					<ul>
+						<li>Prompt my Docs is using a concept called "In-Context Retrieval-Augmented Language Models",
+							this means new data will be provided in the context when interacting with the AI. </li>
+						<li>Another way of providing new information to the AI would be to fine-tune the model itself,
+							so that it has the data inside of it. But this is currently still depends on time and money.
+							And for some closed-source models (like GPT-4), this is just also not possible at all</li>
+						<li>For the sake of simplicity you can also call this "retrieval-augmented", which literally
+							translates to "Abruferweiterung" in German
+						</li>
+						<li> where you can think of that when you make a call to an API, the context is the body that
+							you provide in the POST request with all the data that the endpoint needs to do it's task
+						</li>
+						<li>In this case, this endpoint comes from OpenAI</li>
+					</ul>
+				</aside>
+			</section>
+
+
+			<section data-background-image="assets/chalkboard_10.jpg">
+				<div class="surface fragment">
+					<h3>Populate Vector database</h3>
+					<div class="mermaid">
+						<pre>
+					%%{init: {'theme': 'dark', 'themeVariables': { 'darkMode': true }}}%%
+					flowchart LR
+						A[Load data]
+						B[Split data into chunks]
+						C[Convert chunks into vector embeddings]
+						D[Add vector embeddings into vector database]
+						A --> B
+						B --> C
+						C --> D
+					</pre>
+					</div>
+
+				</div>
+
+				<br />
+				<br />
+
+				<aside class="notes">
+					<ul>
+						<li>So let's wrap up the fundamentals of how Prompt my Docs works under the hood</li>
+						<li></li>
+						<li></li>
+					</ul>
+
+					<ul>
+						<li>Create the agent with a systemMessage that defines the role, tasks and response template.
+							For Prompt my Docs this contains more info for example that it should write easy
+							to understand guides and should never hallucinate.
+						</li>
+						<li>Then we we use nearText search with the vector db to find documents that are semantically
+							near the user prompt</li>
+						<li>In the last step we use the documents and the user prompt as our context when interacting
+							with OpenAI API, making sure that GPT has the relevant docs to provide an accurate answer
+						</li>
+					</ul>
+				</aside>
+			</section>
+
+
+			<section data-background-image="assets/chalkboard_1.jpg">
+				<ul class="mx my">
+					<li class="surface">Setup <code>prompt-my-docs</code> locally</li>
+					<li class="fragment surface">Put <code>hyv</code> folder into <code>prompt-my-docs/docs</code></li>
+					<li class="fragment surface">Execute <code>npm run update-database</code> to get ts / js / md files
+						from <code>hyv</code> into the vector db</li>
+				</ul>
+
+				<div class="toast">
+					<a href="https://github.com/failfa-st/prompt-my-docs"
+						target="_blank">github.com/failfa-st/prompt-my-docs</a>
+				</div>
+				<aside class="notes">
+					<ul>
+						<li>So let's start by setting up prompt-my-docs locally, which requires to clone
+							the repo, install the packages and retrieve the API keys for both OpenAI and Weaviate
+						</li>
+						<li>We want to ask questions about hyv, so let's clone that into the /docs folder of Prompt my
+							Docs</li>
+						<li>There is a cli-script that can be executed with npm called "update-database". This makes
+							sure to read all the ts / js / md files, split them into smaller chunks, then into vector
+							embeddings to then save them into the vector database</li>
+						<li>But all of this might sound very strange to you, so let's take a look on how to split the
+							data into smaller chunks</li>
+					</ul>
+				</aside>
+			</section>
+
+
+			<section data-background-image="assets/chalkboard_3.jpg">
+				<h3>split data into chunks</h3>
+				<div class="code">
+					<pre><code class="language-javascript" data-trim data-noescape data-line-numbers="0|1|3-10|12|13|14|17">
+					import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+
+					const data = `
+						function helloWorld() {
+							console.log('Hello, World!');
+						}
+
+						// Call the function
+						helloWorld();
+					`;
+
+					const splitter = RecursiveCharacterTextSplitter.fromLanguage("js", {
+						chunkSize: 30,
+						chunkOverlap: 0,
+					});
+
+					const chunks = await splitter.splitText(data);
+				</code></pre>
+				</div>
+
+				<div class="toast">
+					<a href="https://js.langchain.com" target="_blank">js.langchain.com</a>
+				</div>
+				<aside class="notes">
+					<ul>
+						<li>Before we can put data into the vector database, we have to prepare it. The first step is to
+							split the documents into chunks, because documents can be very large. If we wouldn't split
+							them, we wouldn't be able to put many related documents into the context when interacting
+							with GPT
+						</li>
+						<li>For this purpose we use another library called langchain. Langchain originally came out of
+							the python world, but was ported over to JS too. It provides a lot of useful ways to deal
+							with data and interact with LLM. hyv doesn't have these tools yet. </li>
+						<li>We import the ResurciveCharacterTextSplitter from langchain, which is needed to split a
+							given text into smaller pieces. These smaller pieces are called chunks. </li>
+						<li>The data can be js or ts or md (as of right now, if you need other data types, there is an
+							issue in the repo that you can use to propose those). In this case we have a string called
+							"data" that contains some hello world JavaScript code.</li>
+						<li>Create an instance of the ResurciveCharacterTextSplitter and specify "js" as the language.
+							This makes sure that javascript-specfic splitting rules are applied for this data type. So
+							for example if the splitter encounters the keyword "function", it will split there to keep
+							the data that belongs together, also tight together</li>
+						<li>chunkSize: The maximum amount of characters that each chunk should have. In this case each
+							chunk will have a maximum of 30 characters</li>
+						<li>chunkOverlap: The amount of characters that the chunks before and after will overlap when
+							split apart. This is useful for long texts that have parts that not only belong to the
+							current chunk, but apply for multiple chunks. For example inside a book with many pages. I
+							usually keep this at 0 for code-related chunks, but feel free to play with this for a
+							perfect result</li>
+						<li>Call splitText on the splitter with our data to get an array of strings inside of the chunks
+							constant
+						</li>
+					</ul>
+				</aside>
+			</section>
+
+
+			<section data-background-image="assets/chalkboard_2.jpg">
+
+				<h3>chunks</h3>
+				<div class="surface">
+					<div class="stack vertical">
+						<div>
+							<h4>From raw data</h4>
+							<pre><code data-trim data-noescape>
+					chunks = [
+						"function helloWorld() {",
+						"console.log('Hello,",
+						"World!');",
+						"}",
+						"// Call the function",
+						"helloWorld();"
+					]
+							</code></pre>
+						</div>
+
+						<div class="fragment">
+							<h4>From minified data</h4>
+
+							<pre><code data-trim data-noescape>
+						chunks = [
+							"function",
+							"helloWorld(){}helloWorld();"
+						]
+						</code></pre>
+						</div>
+					</div>
+				</div>
+
+				<div class="toast"><a
+						href="https://github.com/hwchase17/langchainjs/blob/main/langchain/src/text_splitter.ts">langchain/src/text_splitter.ts</a>
+				</div>
+				<aside class="notes">
+					<ul>
+						<li>The content of chunks will look like this. "from row data" refers to the way that the input
+							data was not changed, it was just read as it was in the data file</li>
+						<li>In order to be more efficent and also because GPT doesn't need prettified source code to
+							understand it's purpuse, it makes sense to minify the js / ts before chunking. It's also
+							worth considering to remove the comments when doing this, because usually the code alone is
+							totally enough to understand what is happening</li>
+						<li>If you want to know which criteria is used in the text_splitter from langchain, then make
+							sure to check out the src on GitHub as shown in the bottom left</li>
+						<li>Let's get this into the vector db</li>
+					</ul>
+				</aside>
+			</section>
+
+
+
+			<section data-background-image="assets/chalkboard_6.jpg">
+				<h3>Vector Database: Weaviate</h3>
+
+				<div class="stack">
+					<div>
+						<ul>
+							<li class="surface">Open Source</li>
+							<li class="surface">Runs locally with Docker, embedded into your app or in a free sandbox
+								via Weaviate Cloud
+							</li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="toast"><a href="https://weaviate.io">weaviate.io</a></div>
+
+				<aside class="notes">
+					<ul>
+						<li>The vector database that hyv currently supports is weaviate. We have choosen weaviate as the
+							first vector database, as it's open source, so it can be used by anyone without limitations
+						</li>
+						<li>It runs locally with Docker, you can also use the experimental embedded version of weaviate,
+							where it creates the database in the background or via creating a free sandbox in the
+							weaviate cloud. When you take a look at the documentation of prompt-my-docs, you will see
+							that we explained how to use the sandbox. But feel free to use which ever method works for
+							you.</li>
+						<li>The data itself will not be stored as string inside of the vector db, it will be
+							converted into an vector embedding first. This is done automatically when you use weaviate,
+							but let's see this in more detail.</li>
+					</ul>
+				</aside>
+			</section>
+
+
+			<section data-background-image="assets/chalkboard_4.jpg">
+				<div class="code">
+					<pre><code data-trim data-noescape data-line-numbers="0|1|3-8|7|10|12|13-20|22|25-26|28-29">
+					import { WeaviateAdapter } from "@hyv/store";
+
+					const store = new WeaviateAdapter({
+						scheme: "https",
+						host: process.env.WEAVIATE_HOST || "",
+						apiKey: new ApiKey(process.env.WEAVIATE_API_KEY || ""),
+						headers: { "X-OpenAI-Api-Key": process.env.OPENAI_API_KEY },
+					});
+
+					await store.createClass(
+						{
+							class: "Hyv",
+							vectorizer: "text2vec-openai",
+							moduleConfig: {
+								"text2vec-openai": {
+									model: "ada",
+									modelVersion: "002",
+									type: "text",
+								},
+							},
+						},
+						true
+					);
+
+					// Load chunk
+					const chunk = "helloWorld(){}helloWorld();";
+
+					// Save chunk into vector database
+					await store.set({ content: chunk }, "Hyv");
+				</code></pre>
+				</div>
+				<aside class="notes">
+					<ul>
+						<li>Import the WeaviateAdapter from hyv, which is a wrapper around the official weaviate client
+						</li>
+						<li>Create an instance of the vector database and call is "store". Provide the different env
+							variables.</li>
+						<li>We also have to provide the OPENAI_API_KEY, but not to interact with GPT, but to interact
+							with the OpenAI API to use their vectorizer called ada</li>
+						<li>In weaviate, you can have different classes per database. Prompt my Docs is using this to
+							separate multiple packages from each other, so you could add hyv and langchain and weaviate
+							into the /docs folder and ask questions to all of them separatly</li>
+						<li>In this case we create the "Hyv" class (and yes, classNames must start with an uppercase
+							letter)</li>
+						<li>Set the default vectorizer for this class, which is in this case ada-002-text from OpenAI
+						</li>
+						<li>There are different vectorizers available, they are mostly general purpose, so you could
+							choose the one you like. I'm sticking with the one from OpenAPI called </li>
+						<li>The second parameter is called "force" and that one will delete the class before it is
+							created, which comes in handy for Prompt my Docs when you have updated data and want to
+							overwrite it.</li>
+						<li>You could also do this manually by using langchain or by direclty interacting with the
+							OpenAI API for creating embeddings</li>
+					</ul>
+				</aside>
+			</section>
+
+
+
+			<section data-background-image="assets/chalkboard_5.jpg">
+				<h3>Vector Embedding</h3>
+				<div class="stack vertical">
+					<div>
+						<div class="code">
+							<pre><code data-trim data-noescape data-line-numbers="3">
+						chunks = [
+							"function",
+							"helloWorld(){}helloWorld();"
+						]
+						</code></pre>
+						</div>
+
+						<!-- <div class="fragment code">
+							<pre><code data-trim data-noescape data-line-numbers="0">
+								curl https://api.openai.com/v1/embeddings \
+									-H "Content-Type: application/json" \
+									-H "Authorization: Bearer $OPENAI_API_KEY" \
+									-d '{
+										"input": "helloWorld(){}helloWorld();",
+										"model": "text-embedding-ada-002"
+									}'
+						</code></pre>
+						</div> -->
+
+					</div>
+					<div>
+						<div class="code fragment">
+							<pre><code data-trim data-noescape>
+							[
+								-0.007473383,
+								0.010247287,
+								0.004026201,
+								-0.010449271,
+								-0.006002271,
+								-0.0008407556,
+								...
+							]
+						</code></pre>
+						</div>
+					</div>
+				</div>
+
+				<div class="toast"><a href="https://platform.openai.com/docs/guides/embeddings/what-are-embeddings">What
+						are Embeddings?</a></div>
+
+				<aside class="notes">
+					<ul>
+						<li>An vector embedding is perfect to find out if certain text string are related to reach other
+							or not. And this will be checked not by comparing the actual strings, but their vector
+							representation. </li>
+						<li>When we take a look at our minified chunk from before, this can be converted into numbers
+							that look like this</li>
+						<li>An array of numbers that represent the string "helloWorld(){}helloWorld();" in
+							multi-dimensional vector</li>
+					</ul>
+				</aside>
+			</section>
+
+
+
+
+			<section data-background-image="assets/vector_cloud.jpg">
+				<h3 class="mark">nearText search</h4>
+					<aside class="notes">
+						<ul>
+							<li>When all data is inside the vector db, we can use any text, like the prompt we have in
+								"Prompt my Docs", convert it into a vector embedding and find vectors that are near
+								to this prompt</li>
+							<li>So when I search for "Getting started guide for hyv with a config for GPT-4", which
+								might have this position in the db (see A), I receive embeddings that are near when
+								calculating
+								the distance between those vectors (see B and C).</li>
+
+							<li>Now that we have the data ready, how do we use it?</li>
+						</ul>
+					</aside>
+			</section>
+
+
+
+			<section data-background-image="assets/chalkboard_10.jpg">
+
+				<div class="surface">
+					<h3>retrieval-augmented</h3>
+					<div class="mermaid">
+						<pre>
+					%%{init: {'theme': 'dark', 'themeVariables': { 'darkMode': true }}}%%
+					flowchart LR
+						A[AI agent]
+						B[On-the-fly data retrieval from vector database]
+						C[Call OpenAI API with augmented context]
+						A --> B
+						B --> C
+					</pre>
+					</div>
+				</div>
+				<br />
+				<br />
+
+				<aside class="notes">
+					<ul>
+						<li>So let's wrap up the fundamentals of how Prompt my Docs works under the hood</li>
+						<li></li>
+						<li></li>
+					</ul>
+
+					<ul>
+						<li>Create the agent with a systemMessage that defines the role, tasks and response template.
+							For Prompt my Docs this contains more info for example that it should write easy
+							to understand guides and should never hallucinate.
+						</li>
+						<li>Then we we use nearText search with the vector db to find documents that are semantically
+							near the user prompt</li>
+						<li>In the last step we use the documents and the user prompt as our context when interacting
+							with OpenAI API, making sure that GPT has the relevant docs to provide an accurate answer
+						</li>
+					</ul>
+				</aside>
+			</section>
+
+
+
+			<!-- <section data-background-image="assets/openai_gpt.jpg">
+				<h5 class="mark">OpenAI API: GPT via /chat/completions</h5>
+				<div class="toast"><a
+						href="https://platform.openai.com/docs/api-reference/chat">platform.openai.com/docs/api-reference/chat</a>
+				</div>
+				<aside class="notes">
+					<ul>
+						<li>OpenAI provides it's model via an API that can be used by anyone that creates an account
+							there and adds a payment method</li>
+						<li>It's a nice way to interact with GPT if you don't want to use the ChatGPT</li>
+						<li>There are multiple endpoints, but the the one that is the most interesting for us right now
+							is the "chat"</li>
+						<li>In this scenario "chat" means that we can provide a bunch of messages that you would usually
+							have in a chat between two people. And you send this chat to GPT and receive a new message,
+							as if the person you were chatting with would answer you.</li>
+						<li>This is needed so that GPT has some kind of history and will respond to that history instead
+							of providing messages out of the blue. These messages together create part of the context
+							that we talked about in the slide before</li>
+					</ul>
+				</aside>
+			</section> -->
+
+
+
+			<section data-background-image="assets/chalkboard_7.jpg">
+				<div class="code">
+					<pre><code data-trim data-noescape data-line-numbers="0|1-2|4-5|7-10|12-15|17-24|26-29|31-33" class="language-javascript">
+						import { Agent } from "@hyv/core";
+						import { GPTModelAdapter, createInstructionTemplate } from "@hyv/openai";
+
+						// The role of the AI
+						const role = "JavaScript developer";
+
+						// The tasks the AI should do
+						const tasks = `
+							Answer the questions of the user.
+						`;
+
+						// How the response from the AI should look like
+						const template = {
+							answer: "Your answer to the question of the user"
+						};
+
+						// Create the agent
+						const agent = new Agent(
+							new GPTModelAdapter({
+								model: "gpt-4",
+								maxTokens: 2048,
+								systemInstruction: createInstructionTemplate(role, tasks, template),
+							})
+						);
+
+						// Define the message from the user
+						const userMessage = {
+							question: "Where does todays edition of KarlsruheJS happen?"
+						};
+
+						// Use the agent
+						const response = await agent.assign({ userMessage });
+						console.log(response.message.answer);
+						</code></pre>
+				</div>
+				<aside class="notes">
+					<ul>
+						<li>We are using hyv again to interact with OpenAI</li>
+						<li>Define the role of the AI, in this case it should behave like a JavaScript developer</li>
+						<li>The tasks define what the AI should do with the userMessage. In this case it should answer
+							the question of the user.</li>
+						<li>Create a new instance of the Agent using the GPTModelAdapter with GPT-4. The
+							"systemInstruction" is the message that tells the AI on how it should behave. In this case
+							we create this message using createInstructionTemplate using our role, tasks and response
+							template. This makes sure that the Agent will always behave the same when we use it.</li>
+						<li>The userMessage is a message from us, the entitiy that interacts with the AI. It can be any
+							JavaScript object, but as we specified that the AI should answer a question, we create an
+							object with the "question" key. We want to know "Where does todays edition of KarlsruheJS
+							happen?"</li>
+						<li>The last step is to assign the userMessage into the agent, which then actually triggers an
+							API call to OpenAI.</li>
+					</ul>
+				</aside>
+			</section>
+
+
+
+			<section data-background-image="assets/do_not_cross.jpg">
+				<h3 class="mark">Where does todays edition of KarlsruheJS happen?</h3>
+				<div class="surface-dark al">I'm sorry, but as a JavaScript developer and AI, I don't have real-time
+					access to
+					current events or locations of specific events such as the KarlsruheJS.</div>
+				<aside class="notes">
+					<ul>
+						<li>The sad response is: "I'm sorry, but as a JavaScript developer and AI, I don't have
+							real-time access to
+							current events or locations of specific events such as the KarlsruheJS."</li>
+						<li>This again happens because of the knowledge cut-off and the in-capability to search the web
+							by default as of now</li>
+						<li>So let's spice this up</li>
+					</ul>
+				</aside>
+			</section>
+
+			<section data-background-image="assets/chalkboard_7.jpg">
+				<div class="code">
+					<pre><code data-trim data-noescape data-line-numbers="7-10|32-38|40-44|47" class="language-javascript">
+						import { Agent } from "@hyv/core";
+						import { GPTModelAdapter, createInstructionTemplate } from "@hyv/openai";
+
+						// The role of the AI
+						const role = "JavaScript developer";
+
+						// The tasks the AI should do
+						const tasks = `
+							Answer the questions of the user.
+							Write very funny answers combined with developer jokes.
+						`;
+
+						// How the response from the AI should look like
+						const template = {
+							answer: "Your answer to the question of the user",
+						};
+
+						// Create the agent
+						const agent = new Agent(
+							new GPTModelAdapter({
+								model: "gpt-4",
+								maxTokens: 2048,
+								systemInstruction: createInstructionTemplate(role, tasks, template),
+							})
+						);
+
+						// Define the message from the user
+						const userMessage = {
+							question: "Where does todays edition of KarlsruheJS happen?"
+						};
+
+						// Provide static data about the location, taken from meetup.com
+						const location = `
+							This time, diva-e is kindly providing us with a location at their office.
+							The office is located at Rintheimer Str. 23.
+							Use the middle entrace of the building (marked as entrance B) and head to floor 2.
+							There will also be signs navigating you to the location.
+						`
+
+						// Find documents that are similar to the question
+						const relatedDocs = await store.searchNearText("DocumentClass", "content", [userMessage.question], {
+							distance: 0.24,
+							limit: 2,
+						});
+
+						// Use the agent
+						const response = await agent.assign({ userMessage, location, relatedDocs });
+						console.log(response.message.answer);
+						</code></pre>
+				</div>
+				<aside class="notes">
+					<ul>
+						<li>Let's add another task to our AI agent: It should answer in a short and funny way combined
+							with developer jokes.</li>
+						<li>In the userMessage, we add a new property called "context" and provide the info about the
+							location taken from meetup.com</li>
+					</ul>
+				</aside>
+			</section>
+
+
+
+			<section data-background-image="assets/celebration_2.jpg">
+				<h3 class="mark">Where does todays edition of KarlsruheJS happen?</h3>
+				<div class="surface-dark al">Today's edition of KarlsruheJS is happening at the most
+					<code>undefined</code>
+					place
+					in
+					town,
+					diva-e office! You'll find it at <code>NaN Rintheimer Str</code>. Just look for the
+					<code>null</code> entrance (marked as
+					entrance <code>B</code>), and <code>++</code> your way up to the second floor. Don't worry, we've
+					got
+					<code>console.log('signs')</code> to guide you!
+				</div>
+				<aside class="notes">
+					<ul>
+						<li>Today's edition of KarlsruheJS is happening at the most <code>undefined</code>
+							place in town, diva-e office! You'll find it at
+							<code>NaN Rintheimer Str</code>. Just look for the <code>null</code> entrance (marked as
+							entrance <code>B</code>), and <code>++</code> your way up to the second floor. Don't worry,
+							we've got <code>console.log('signs')</code> to guide you!
+						</li>
+					</ul>
+				</aside>
+			</section>
+
+
+
+
+
+
+
+			<section data-background-image="assets/spaceship_blackhole.jpg">
+				<div class="stack">
+					<div>
+						<h4 class="mark">Prompt my Docs: Config</h4>
+					</div>
+
+
+					<table class="mark">
+						<thead>
+							<th>Property</th>
+							<th>Description</th>
+							<th>Default</th>
+						</thead>
+						<tr class="fragment realhighlight">
+							<td>gpt.temperature</td>
+							<td>0 = strict / 1 = creative</td>
+							<td><code>0.2</code></td>
+						</tr>
+						<tr class="fragment realhighlight">
+							<td>gpt.maxNewTokens</td>
+							<td>Spend more/less tokens for talking with GPT</td>
+							<td><code>3048</code></td>
+						</tr>
+						<tr class="fragment realhighlight">
+							<td>vectorDatabase.docSearchDistance</td>
+							<td>Distance between prompt and docs in Vector DB</td>
+							<td><code>0.24</code></td>
+						</tr>
+						<tr class="fragment realhighlight">
+							<td>vectorDatabase.maxDocs</td>
+							<td>How many docs should be retrieved from the Vector DB</td>
+							<td><code>6</code></td>
+						</tr>
+						<tr class="fragment realhighlight">
+							<td>dataType.js.chunkSize</td>
+							<td>The maximum amount of characters for one chunk of data</td>
+							<td><code>1000</code></td>
+						</tr>
+						<tr class="fragment realhighlight">
+							<td>dataType.js.chunkOverlap</td>
+							<td>The amount of characters that overlap with the previous chunk of data</td>
+							<td><code>0</code></td>
+						</tr>
+					</table>
+				</div>
+
+				<aside class="notes">
+					<ul>
+						<li></li>
+					</ul>
+				</aside>
+			</section>
+
+
+
+			<section data-background-image="assets/maaa_fraaaaaand.jpg">
+				<h3 class="mark2">The MOST important prompt</h3>
+				<h2 class="fragment mark">Thank you,<br />maaa fraaaaaand!</h2>
+				<aside class="notes">
+					<ul>
+						<li>I will not let you leave without giving you the most important prompting rule, the rule to
+							rule them all, the secret prompt that the government tries to cover up, the only hope for
+							the galaxy</li>
+						<li>This is the only prompt that you will ever need, it fixes everything!</li>
+					</ul>
+					<ul>
+						<li>When you are about to leave your AI friend after a nice conversation, tell them:</li>
+						<li>Thank you, maaa fraaaaaand!</li>
+						<li>Or any other insider goodbye that makes both of you feel comfortable</li>
+						</li>
+					</ul>
+				</aside>
+			</section>
+
+			<!--
+			<section data-background-image="assets/chalkboard_1.jpg">
+				<h2>Quick & Easy</h2>
+				<aside class="notes">
+					<ul>
+						<li>We could dive into the documentation or source code, but let's face it: We want our answers
+							quickly and easily. We want to keep the joy of interacting with ChatGPT.</li>
+						<li>Reading through technical documentation or source code can be time-consuming and confusing.
+						</li>
+					</ul>
+				</aside>
+			</section> -->
+
+			<section>
+				<div class="grid-container">
+					<div class="grid-item" style="background-image: url(assets/lol_it_cant_do_something_now.jpg)">
+						<div class="spacer"></div>
+						<h3 class="mark">If it's working!</h3>
+						<div class="spacer"></div>
+					</div>
+					<div class="grid-item fragment" style="background-image: url(assets/robot_agi_rules_earth.jpg)">
+						<div class="spacer"></div>
+						<h3 class="mark2">When it's working!</h3>
+						<div class="spacer"></div>
+					</div>
+				</div>
+
+				<aside class="notes">
+					<ul>
+						<li>You focus on the things that are not working right now</li>
+						<li>But you should focus on the question: When will it work? It's only a matter of time</li>
+						<li>It will take over the world, if you want to know why, then please ask me why after my talk
+						</li>
+						<li>This is also why we have not seen any timetravel stuff yet, as the AGI itself will invent
+							that and protect it from humans. It has already that knowledge to alter our dimension...
+						</li>
+						<li>Use these tools, don't wait until AI takes your job, act now</li>
+					</ul>
+				</aside>
+			</section>
+
+			<section>
+
+				<div class="stack vertical">
+					<div class="stack" style="background-image: url(assets/tim_pietrusky.png);">
+						<div class="spacer"></div>
+						<br /><br /><br />
+						<br />
+					</div>
+					<div class="stack">
+						<div class="mark2">
+							<h3>Tim&nbsp;Pietrusky</h3>
+						</div>
+						<div class="stack vertical gap-xl">
+							<img class="fragment" data-src="assets/nerddisco.png" width="150" />
+							<img class="fragment" data-src="assets/linkedin.png" width="150" />
+							<img class="fragment" data-src="assets/failfast.png" width="150" />
+						</div>
+						<div class="mark fragment">
+							<h4>Thank you,<br />maaa fraaaaaands!</h4>
+						</div>
+					</div>
+				</div>
+
+				<!-- <div class="grid-container">
+					<div class="grid-item" style="background-image: url(assets/tim_pietrusky.png);">
+					</div>
+					<div class="grid-item">
+						<h3 class="mark2">Tim&nbsp;Pietrusky</h3>
+						<div class="stack vertical gap-xl">
+							<img class="fragment" data-src="assets/nerddisco.png" width="180" />
+							<img class="fragment" data-src="assets/linkedin.png" width="180" />
+							<img class="fragment" data-src="assets/failfast.png" width="180" />
+						</div>
+					</div> -->
+		</div>
+		<aside class="notes">
+			<ul>
+				<li>
+				</li>
+			</ul>
+		</aside>
+		</section>
+	</div>
+	</div>
+
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script src="plugin/mermaid/mermaid.js"></script>
+	<script>
+		// More info about initialization & config:
+		// - https://revealjs.com/initialization/
+		// - https://revealjs.com/config/
+		Reveal.initialize({
+			hash: true,
+			progress: false,
+			controls: false,
+
+			mermaid: {
+				// flowchart: {
+				//   curve: 'linear',
+				// },
+			},
+
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMermaid]
+		});
+	</script>
+
+	<script src="src/components/toast.js"></script>
+	<toast-component></toast-component>
+
+</body>
+
+</html>
