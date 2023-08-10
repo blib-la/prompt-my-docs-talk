@@ -310,7 +310,7 @@ gulp.task(
 				],
 				{ base: "./" }
 			)
-			.pipe(gulp.dest("./events/karlsruhejs-20230809/"))
+			.pipe(gulp.dest("./docs/karlsruhejs-20230809/"))
 	)
 );
 
