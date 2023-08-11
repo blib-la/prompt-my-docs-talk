@@ -24,6 +24,10 @@
 			--main-bg-lightness: 35%;
 			--main-bg-saturation: 100%;
 			--main-bg-opacity: 0.75;
+			--main-primary: rgb(214 44 216);
+			--main-primary-dark: hsl(299, 69%, 21%);
+			--main-shadow: 0 0 20px var(--main-primary);
+			--main-shadow-dark: 0 0 20px var(--main-primary-dark);
 
 			--toast-color: #000;
 			--toast-bg: rgba(255, 255, 255, 0.5);
@@ -144,13 +148,13 @@
 
 		.surface {
 			background: rgba(0, 0, 0, .5);
-			filter: drop-shadow(0 0 20px rgb(214 44 216));
+			box-shadow: var(--main-shadow);
 			padding: 1rem;
 		}
 
 		.surface-dark {
 			background: rgba(0, 0, 0, .5);
-			filter: drop-shadow(0 0 20px hsl(299, 69%, 21%));
+			box-shadow: var(--main-shadow-dark);
 			padding: 1rem;
 		}
 
@@ -173,7 +177,7 @@
 		}
 
 		.code>.code-wrapper {
-			filter: drop-shadow(0 0 20px rgb(214 44 216));
+			box-shadow: var(--main-shadow);
 		}
 
 
