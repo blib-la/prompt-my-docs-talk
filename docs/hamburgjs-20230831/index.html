@@ -1,0 +1,979 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>Prompt my Docs - ChatGPT for your own data</title>
+
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/black.css">
+
+	<!-- Theme used for syntax highlighted code -->
+	<link rel="stylesheet" href="plugin/highlight/atom-one-dark.css">
+
+	<!-- add inline style with :root -->
+	<style>
+		:root {
+			--r-main-font-size: 2.75em;
+			--r-heading1-text-shadow: 5px 5px 0px #000000;
+			--r-heading-text-shadow: none;
+
+			--main-bg-lightness: 35%;
+			--main-bg-saturation: 100%;
+			--main-bg-opacity: 0.75;
+			--main-primary: rgb(214 44 216);
+			--main-primary-dark: hsl(299, 69%, 21%);
+			--main-shadow: 0 0 20px var(--main-primary);
+			--main-shadow-dark: 0 0 20px var(--main-primary-dark);
+
+			--toast-color: #000;
+			--toast-bg: rgba(255, 255, 255, 1.0);
+			--toast-size: 1.5em;
+			--toast-font: var(--r-heading-font);
+			--toast-font-weight: normal;
+			--toast-line-height: 1.0;
+			--toast-letter-spacing: normal;
+			--toast-text-transform: none;
+
+			--toast-link-color: #000;
+			--toast-link-text-decoration: underline;
+			--toast-link-hover-color: #0056b3;
+			--toast-link-hover-text-decoration: none;
+
+
+			--chat-box-padding: 0.35em;
+			--chat-box-margin-bottom: .5em;
+
+			--context-color: #fff;
+
+			--system-color: #bbb;
+			--system-color-light: #eee;
+
+			--user-color: hsl(50, 90%, 70%);
+			--user-color-light: hsla(50, 60%, 90%);
+			--user-color-dark: hsla(50, 90%, 15%);
+
+			--ai-color: hsl(120, 90%, 70%);
+			--ai-color-light: hsla(120, 60%, 90%);
+			--ai-color-dark: hsla(120, 90%, 15%);
+
+		}
+
+		h3 {
+			text-transform: none !important;
+		}
+
+		h5 {
+			font-size: 4rem !important;
+			text-transform: none !important;
+		}
+
+		code {
+			background: var(--main-primary);
+			padding: 0 .125rem;
+		}
+
+		table {
+			font-size: 0.65em;
+		}
+
+		.grid-container {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 20px;
+			height: 100%;
+		}
+
+		.grid-item {
+			padding: 10px;
+			height: 100%;
+			background-position: center;
+			background-repeat: no-repeat;
+			background-size: cover;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+		}
+
+		.stack {
+			height: 100%;
+			background-position: center;
+			background-repeat: no-repeat;
+			background-size: cover;
+			display: flex;
+			align-items: start;
+			justify-content: center;
+			flex-direction: column;
+			gap: 0.25rem;
+		}
+
+		.stack.nogap {
+			gap: 0;
+		}
+
+		.stack.center {
+			align-items: center;
+		}
+
+		.stack.vertical {
+			flex-direction: row;
+		}
+
+		.stack.gap-xl {
+			gap: 1rem;
+		}
+
+		.stack>div {
+			width: 100%;
+		}
+
+		.stack,
+		.stack>div,
+		.chat-context,
+		.chat-box,
+		.chat-box:before {
+			box-sizing: border-box;
+		}
+
+		.chat-wrapper {
+			min-height: 450px;
+		}
+
+		.chat-context {
+			position: relative;
+			/* box-shadow: 5px 0 0 5px var(--context-color); */
+			border: 5px dashed var(--context-color);
+			border-left: 0;
+			transform: translateX(6.5%);
+			padding: .25em .25em .25em 0;
+			background: var(--r-background-color);
+		}
+
+		.chat-context>.stack {
+			margin-bottom: calc(var(--chat-box-margin-bottom) * -1);
+		}
+
+		.chat-context-label,
+		.chat-context-label.left,
+		.chat-context-label.right {
+			position: absolute;
+			top: 0;
+			transform: translateY(-100%);
+			font-size: 1.5em;
+			background: var(--context-color);
+			border: 10px solid var(--context-color);
+			border-top: unset;
+			border-bottom: unset;
+			color: #000;
+		}
+
+		.chat-context-label.left {
+			left: 0;
+		}
+
+		.chat-context-label.right {
+			right: 0;
+		}
+
+		.chat-context-label.small {
+			font-size: 1em;
+		}
+
+
+		.chat-box {
+			position: relative;
+			padding: var(--chat-box-padding);
+			text-align: left;
+			border-top: 5px solid var(--system-color);
+			border-bottom: 5px solid var(--system-color);
+			margin-bottom: var(--chat-box-margin-bottom);
+			background: #333;
+		}
+
+		.chat-box:before {
+			position: absolute;
+			top: 0;
+			left: 0;
+			transform: translateX(calc(-100% - var(--chat-box-padding)));
+			font-size: 1.5em;
+			padding: 0 .25em;
+			margin-right: 0.35em;
+			background: var(--system-color-light);
+			box-shadow: 0 0 0 5px var(--system-color);
+			vertical-align: middle;
+		}
+
+		.chat-box.inactive {
+			opacity: .5;
+		}
+
+		.chat-box.user {
+			border-top: 5px solid var(--user-color);
+			border-bottom: 5px solid var(--user-color);
+		}
+
+		.chat-box.user:before {
+			content: "👩‍💻";
+			box-shadow: 0 0 0 5px var(--user-color);
+			background: var(--user-color-light);
+		}
+
+		.chat-box.ai {
+			border-top: 5px solid var(--ai-color);
+			border-bottom: 5px solid var(--ai-color);
+		}
+
+		.chat-box.ai:before {
+			content: "🤖";
+			box-shadow: 0 0 0 5px var(--ai-color);
+			background: var(--ai-color-light);
+		}
+
+		.chat-box.system:before {
+			content: "🛠";
+		}
+
+
+
+		.spacer {
+			height: 20vh;
+			width: 100%;
+		}
+
+		.mark {
+			padding: 0 .75rem;
+			display: block;
+			background: #000;
+			filter: none !important;
+			border: 10px solid transparent;
+			border-image: linear-gradient(to bottom right,
+					hsla(281, var(--main-bg-saturation), var(--main-bg-lightness), var(--main-bg-opacity)) 0%,
+					hsla(211, var(--main-bg-saturation), var(--main-bg-lightness), var(--main-bg-opacity)) 25%,
+					hsla(80, var(--main-bg-saturation), var(--main-bg-lightness), var(--main-bg-opacity)) 50%,
+					hsla(44, var(--main-bg-saturation), var(--main-bg-lightness), var(--main-bg-opacity)) 75%,
+					hsla(328, var(--main-bg-saturation), var(--main-bg-lightness), var(--main-bg-opacity)) 100%);
+			border-image-slice: 1;
+		}
+
+		.mark2 {
+			padding: 1rem;
+			color: #fff;
+			background: #333;
+			border: 10px solid #fff;
+		}
+
+		h2 {
+			padding: 1rem;
+			text-shadow: none !important;
+			color: #fff;
+			background: #333;
+		}
+
+		.toast {
+			display: none;
+		}
+
+		.fragment.realhighlight.visible.current-fragment {
+			text-shadow: 0 0 8px #333 !important;
+			color: #fff;
+
+			background: linear-gradient(to bottom right,
+					hsla(281, var(--main-bg-saturation), calc(var(--main-bg-lightness) * .5), var(--main-bg-opacity)) 0%,
+					hsla(211, var(--main-bg-saturation), calc(var(--main-bg-lightness) * .5), var(--main-bg-opacity)) 25%,
+					hsla(80, var(--main-bg-saturation), calc(var(--main-bg-lightness) * .5), var(--main-bg-opacity)) 50%,
+					hsla(44, var(--main-bg-saturation), calc(var(--main-bg-lightness) * .5), var(--main-bg-opacity)) 75%,
+					hsla(328, var(--main-bg-saturation), calc(var(--main-bg-lightness) * .5), var(--main-bg-opacity)) 100%);
+		}
+
+		.surface {
+			background: rgba(0, 0, 0, .5);
+			box-shadow: var(--main-shadow);
+			padding: 1rem;
+		}
+
+		.surface-dark {
+			background: rgba(0, 0, 0, .5);
+			box-shadow: var(--main-shadow-dark);
+			padding: 1rem;
+		}
+
+		ul {
+			list-style: none !important;
+		}
+
+		.mx {
+			margin-left: 3rem !important;
+			margin-right: 3rem !important;
+		}
+
+		.my {
+			margin-top: 3rem !important;
+			margin-bottom: 3rem !important;
+		}
+
+		.hljs {
+			background: rgba(30, 30, 30, 1.0);
+		}
+
+		.code>.code-wrapper {
+			box-shadow: var(--main-shadow);
+		}
+
+		.highlight-line {}
+
+		.mermaid .nodeLabel {
+			line-height: 1;
+			vertical-align: super;
+		}
+
+		.al {
+			text-align: left;
+		}
+
+		.custom-fragment {
+			visibility: hidden;
+			opacity: 0;
+			max-height: 0;
+			padding: 0;
+			border-width: 0 !important;
+			transition: opacity 1.0s ease-in-out, max-height 1.0s ease-in-out, transform 0s linear, border-width 1.0s;
+			transform: translateY(100%);
+			margin-bottom: 0;
+		}
+
+		.custom-fragment.visible,
+		.custom-fragment.fragment-current {
+			opacity: 1;
+			max-height: 500px;
+			visibility: visible;
+			padding: var(--chat-box-padding);
+			transform: translateY(0%);
+			border-width: 5px !important;
+			margin-bottom: var(--chat-box-margin-bottom);
+		}
+	</style>
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides" id="slides">
+			<section data-background-image="assets/intro.jpg">
+				<h1 class="r-fit-text">Prompt my Docs</h1>
+				<div class="toast">Tim Pietrusky @ <a
+						href="https://www.meetup.com/hamburg-js/events/294429119/">HH.js</a> (2023-08-31), CHECK24,
+					Hamburg, Germany</div>
+				<aside class="notes">
+				</aside>
+			</section>
+
+			<section data-background-image="assets/chatgpt_1.jpg" aria-label="ChatGPT">
+				<!-- <h3 class="mark2">ChatGPT</h3> -->
+				<aside class="notes">
+					<ul>
+						<li>Who has used ChatGPT at least once, please raise your hand!</li>
+						<li>Who is using ChatGPT every day for everything? Please show me your hand</li>
+						<li>Who has used the OpenAI API to interact with ChatGPT to create their own demo or even an
+							app?</li>
+					</ul>
+				</aside>
+			</section>
+
+			<section data-background-image="assets/">
+				<div class="chat-wrapper">
+					<div class="chat-context">
+						<div class="chat-context-label left">Chat</div>
+						<div class="stack nogap">
+							<div class="chat-box user">Write a "hello world" in JavaScript</div>
+							<div class="chat-box ai fragment custom-fragment custom">Certainly! The "Hello, World!"
+								program
+								is often used as a simple introductory example to demonstrate
+								the basic syntax of a programming language:
+
+								<code>console.log("Hello, World!");</code>
+							</div>
+						</div>
+					</div>
+				</div>
+				<aside class="notes">
+					<ul>
+						<li></li>
+					</ul>
+				</aside>
+			</section>
+
+			<section data-background-image="assets/">
+				<div class="chat-wrapper">
+					<div class="chat-context">
+						<div class="chat-context-label left fragment" data-fragment-index="2">Context</div>
+						<div class="stack nogap">
+							<div class="chat-box system fragment custom-fragment custom" data-fragment-index="0">System
+								Message(s)<span class="fragment" data-fragment-index="1">: "You are a
+									helpful
+									assistant"</span></div>
+							<div class="chat-box user">Human Message(s)</div>
+							<div class="chat-box ai">AI Message(s)</div>
+						</div>
+					</div>
+				</div>
+				<div class="toast"><a href="https://platform.openai.com/playground">platform.openai.com/playground</a>
+				</div>
+				<aside class="notes">
+					<ul>
+						<li>Let's take a look at the entities that are used to create the chat</li>
+						<li>HumanMessage is the message from the user</li>
+						<li>AIMessage is the message from the AI, a reponse to what the user said via the HumanMessage
+						</li>
+						<li>Then we have a third message type called SystemMessage. This one can be used to provide
+							custom instructions to the AI, a feature that ChatGPT introduced recently also in their UI,
+							but which does exist for any LLM. It can be used to tell the AI to act in a specific way,
+							like a different person for example a clown or what ever you can think of. It can also be
+							used to tell the AI which specific tasks it should do when it gets a message from the user
+							or how the reponse should be formatted. </li>
+					</ul>
+				</aside>
+			</section>
+
+			<section data-background-image="assets/clown_3.png">
+				<div class="chat-wrapper">
+					<div class="chat-context">
+						<div class="stack nogap">
+							<div class="chat-box system" data-fragment-index="0">You are a clown and you always respond
+								with
+								42 for any question.</div>
+							<div class="chat-box user fragment custom-fragment custom">Write a "hello world" in
+								JavaScript
+							</div>
+							<div class="chat-box ai fragment custom-fragment custom"><code>console.log(42);</code></div>
+						</div>
+					</div>
+				</div>
+				<aside class="notes">
+					<ul>
+						<li></li>
+					</ul>
+				</aside>
+			</section>
+
+			<section data-background-image="assets/chalkboard_3.jpg">
+				<div class="code">
+					<pre><code class="language-javascript" data-trim data-noescape data-line-numbers="1-2|3-6|8-11|13-14|16-17|19-20">
+						import { ChatOpenAI } from "langchain/chat_models/openai";
+						import { HumanMessage, SystemMessage } from "langchain/schema";
+						import { config } from "dotenv";
+
+						// Load OPENAI_API_KEY from .env
+						config();
+
+						// How should the AI behave?
+						const systemMessage = new SystemMessage(
+							"You are a clown and you always respond with 42 for any question."
+						);
+
+						// The prompt from the human
+						const userMessage = new HumanMessage("Write a 'hello world' in JavaScript");
+
+						// Use GPT-3.5 Turbo model from OpenAI
+						const chat = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
+
+						// Interact with the API, passing all messages into the context
+						const response = await chat.call([systemMessage, userMessage]);</code></pre>
+				</div>
+
+				<div class="toast"><a href="https://js.langchain.com" target="_blank">js.langchain.com</a></div>
+				<aside class="notes">
+					<ul>
+						<li></li>
+					</ul>
+				</aside>
+			</section>
+
+
+
+			<section data-background-image="assets/">
+				<h3>Context Size: Tokens</h3>
+
+				<img data-src="assets/tokenizer_1.jpg" width="900" />
+
+				<span class="fragment" data-fragment-index="2">OpenAI GPT-3.5 Turbo: 4096
+					tokens</span>
+
+				<div class="toast"><a href="https://platform.openai.com/tokenizer">platform.openai.com/tokenizer</a>
+				</div>
+				<aside class="notes">
+					<ul>
+						<li>Tokens are common sequences of characters
+							found in text. The models understand the relationships between these tokens, and
+							have the ability to produce the next token in a sequence of tokens. </li>
+						<li>GPT will predict the next token that makes sense from their point of view. So based on what
+							you ask GPT, it will find the tokens that match the tokens that you used in your question
+						</li>
+					</ul>
+				</aside>
+			</section>
+
+			<section data-background-image="assets/do_not_cross.jpg">
+				<div class="chat-wrapper" style="min-height: 600px">
+					<div class="chat-context">
+						<div class="stack nogap">
+							<div class="chat-box system" data-fragment-index="0">You are a JavaScript developer and you
+								answer the questions of the user.</div>
+							<div class="chat-box user fragment custom-fragment custom">Where does todays edition of
+								HH.js happen?
+							</div>
+							<div class="chat-box ai fragment custom-fragment custom">I'm sorry, but as a JavaScript
+								developer and AI, I don't have real-time access to
+								current events or locations of specific events such as HH.js</div>
+						</div>
+					</div>
+				</div>
+				<aside class="notes">
+					<ul>
+						<li></li>
+					</ul>
+				</aside>
+			</section>
+
+			<section data-background-image="assets/brain_with_books.jpg" aria-label="Retrival Agumented Generation">
+				<h3 class="mark2">RAG<br />= Retrieval Augmented Generation</h3>
+				<div class="toast"><a href="https://arxiv.org/abs/2302.00083">arxiv.org/abs/2302.00083</a></div>
+				<aside class="notes">
+					<ul>
+						<li>Prompt my Docs is using a concept called "In-Context Retrieval-Augmented Language Models",
+							this means new data will be provided in the context when interacting with the AI. </li>
+						<li>Another way of providing new information to the AI would be to fine-tune the model itself,
+							so that it has the data inside of it. But this is currently still depends on time and money.
+							And for some closed-source models (like GPT-4), this is just also not possible at all</li>
+						<li>For the sake of simplicity you can also call this "retrieval-augmented", which literally
+							translates to "Abruferweiterung" in German
+						</li>
+						<li> where you can think of that when you make a call to an API, the context is the body that
+							you provide in the POST request with all the data that the endpoint needs to do it's task
+						</li>
+						<li>In this case, this endpoint comes from OpenAI</li>
+					</ul>
+				</aside>
+			</section>
+
+			<section data-background-image="assets/chalkboard_4.jpg">
+				<div class="code">
+					<pre><code class="language-javascript" data-trim data-noescape data-line-numbers="0|13-14|22-23">
+						import { ChatOpenAI } from "langchain/chat_models/openai";
+						import { HumanMessage, SystemMessage } from "langchain/schema";
+						import { config } from "dotenv";
+
+						// Load OPENAI_API_KEY from .env
+						config();
+
+						// How should the AI behave?
+						const systemMessage = new SystemMessage(
+							"You are a JavaScript developer and you answer the questions of the user."
+						);
+
+						// Get the location info from meetup.com
+						const location = new SystemMessage("Location: CHECK24, An der Alster 64, Hamburg");
+
+						// The prompt from the human
+						const userMessage = new HumanMessage("Where does todays edition of HH.js happen?");
+
+						// Use GPT-3.5 Turbo model from OpenAI
+						const chat = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
+
+						// Interact with the API, passing all messages into the context
+						const response = await chat.call([systemMessage, location, userMessage]);
+					</code></pre>
+				</div>
+				<aside class="notes">
+					<ul>
+						<li></li>
+					</ul>
+				</aside>
+			</section>
+
+			<section data-background-image="assets/celebration_2.jpg">
+				<div class="chat-wrapper" style="min-height: 800px">
+					<div class="chat-context">
+						<div class="stack nogap">
+							<div class="chat-box system inactive" data-fragment-index="0">You are a JavaScript developer
+								and you
+								answer the questions of the user.</div>
+							<div class="chat-box system inactive">Location: CHECK24, An der Alster 64, Hamburg</div>
+							<div class="chat-box user">Where does todays edition of
+								HH.js happen?
+							</div>
+							<div class="chat-box ai fragment custom-fragment custom">Today's edition of HH.js happens at
+								CHECK24, An der Alster 64, Hamburg.</div>
+						</div>
+					</div>
+				</div>
+				<aside class="notes">
+					<ul>
+						<li></li>
+					</ul>
+				</aside>
+			</section>
+
+
+
+			<section data-background-image="assets/documents_1.jpg">
+				<div class="chat-wrapper" style="min-height: 200px">
+					<div class="chat-context fragment">
+						<div class="stack nogap">
+							<div class="chat-box user">Getting started guide to understand how langchain works</div>
+							<div class="chat-box user fragment custom-fragment custom">How can I create a chat-bot with
+								OpenAI GPT-3.5 Turbo using
+								LangChain?</div>
+						</div>
+					</div>
+				</div>
+				<aside class="notes">
+					<ul>
+						<li>So imagine you have a lot of files and you can't put them directly into your code</li>
+						<li>For example a whole repository with many markdown and code files</li>
+						<li>based on the question you want to ask, different files should be retrieved and put into the
+							context</li>
+						<li>The first prompt might find a lot of markdown files, with general information on how to get
+							started</li>
+						<li>The second prompt might look at actual source code, maybe they already have an example that
+							implements a chat-bot and can be used to answer the question</li>
+						<li>Fact is, that you don't want to find these files yourself</li>
+					</ul>
+				</aside>
+			</section>
+
+			<!-- <div class="code">
+				<pre><code class="language-javascript" data-trim data-noescape data-line-numbers="1|2"></code></pre>
+			</div> -->
+
+
+			<section data-background-image="assets/chalkboard_7.jpg">
+				<h3>Vector</h3>
+				<div class="stack vertical center">
+					<div class="fragment"><span style="font-size: 3em">📃</span><br />File<br />(e.g. markdown or code)
+					</div>
+					<!-- <div class="fragment" style=" align-items: center;">
+						<span style="font-size: 2em;">➡️</span><br />convert
+					</div> -->
+					<div class="fragment">
+						<div class=" code">
+							<pre><code data-trim data-noescape>
+							[
+								-0.007473383,
+								0.010247287,
+								0.004026201,
+								-0.010449271,
+								-0.006002271,
+								-0.0008407556,
+								...
+							]
+							</code></pre>
+							Vector Embedding
+						</div>
+					</div>
+				</div>
+				<aside class="notes">
+					<ul>
+						<li>We are using a vector representation of our data. </li>
+						<li>We take the files from the repo, like markdown or code files</li>
+						<li>Convert them into vectors, also called vector embeddings</li>
+						<li>This is a model that converts the text into a vector repesantion, that looks like this: an
+							array of floating numbers</li>
+					</ul>
+				</aside>
+			</section>
+
+			<section data-background-image="assets/vector_cloud.jpg">
+				<h3 class="mark2">ANN <br />= Approximate Nearest Neighbor</h3>
+
+				<aside class="notes">
+					<ul>
+						<li>This is an algorithm that lets us find vectors that are near other vectors</li>
+					</ul>
+				</aside>
+			</section>
+
+
+			<section data-background-image="assets/">
+				<div class="code">
+					<pre><code class="language-javascript" data-trim data-noescape data-line-numbers="1-2|3-6|8-9|11-16|13|14|18-19|21-29">
+						import { HNSWLib } from "langchain/vectorstores/hnswlib";
+						import { OpenAIEmbeddings } from "langchain/embeddings/openai";
+						import { config } from "dotenv";
+
+						// Load OPENAI_API_KEY from .env
+						config();
+
+						// Use OpenAI API to create vector embeddings
+						const embedding = new OpenAIEmbeddings();
+
+						// Create a vector store using HNSWLib
+						const vectorStore = await HNSWLib.fromTexts(
+							[`# LangChain.js`, `console.log("hello world");`],
+							[{ path: "README.md" }, { path: "helloWorld.js" }],
+							embedding
+						);
+
+						// Find one vector that is similar to the search string
+						const document = await vectorStore.similaritySearch("Can I have a console and a world?", 1);
+
+						console.log(document);
+						/*
+						[
+							Document {
+								pageContent: 'console.log("hello world");',
+								metadata: { path: 'helloWorld.js' }
+							}
+						]
+						*/
+					</code></pre>
+				</div>
+				<aside class="notes">
+					<ul>
+						<li></li>
+					</ul>
+				</aside>
+			</section>
+
+
+
+			<section data-background-image="assets/prompt_my_docs_1.png" aria-label="Prompt my Docs in action">
+				<div class="toast"><a
+						href="https://github.com/failfa-st/prompt-my-docs">github.com/failfa-st/prompt-my-docs</a>
+				</div>
+				<aside class="notes">
+					<ul>
+						<li></li>
+					</ul>
+				</aside>
+			</section>
+
+			<section data-background-image="assets/prompt_my_docs_2.png" aria-label="Prompt my Docs in action">
+				<div class="toast"><a
+						href="https://github.com/failfa-st/prompt-my-docs">github.com/failfa-st/prompt-my-docs</a>
+				</div>
+				<aside class="notes">
+					<ul>
+						<li></li>
+					</ul>
+				</aside>
+			</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			<section data-background-image="assets/maaa_fraaaaaand.jpg">
+				<h3 class="mark2">The MOST important prompt</h3>
+				<h2 class="fragment mark">Thank you,<br />maaa fraaaaaand!</h2>
+				<aside class="notes">
+					<ul>
+						<li>I will not let you leave without giving you the most important prompting rule, the rule to
+							rule them all, the secret prompt that the government tries to cover up, the only hope for
+							the galaxy</li>
+						<li>This is the only prompt that you will ever need, it fixes everything!</li>
+					</ul>
+					<ul>
+						<li>When you are about to leave your AI friend after a nice conversation, tell them:</li>
+						<li>Thank you, maaa fraaaaaand!</li>
+						<li>Or any other insider goodbye that makes both of you feel comfortable</li>
+						</li>
+					</ul>
+				</aside>
+			</section>
+
+			<section>
+				<div class="grid-container">
+					<div class="grid-item" style="background-image: url(assets/lol_it_cant_do_something_now.jpg)">
+						<div class="spacer"></div>
+						<div class="spacer"></div>
+						<h3 class="mark">If it's working!</h3>
+
+					</div>
+					<div class="grid-item fragment" style="background-image: url(assets/agi_2.jpg)">
+						<div class="spacer"></div>
+						<div class="spacer"></div>
+						<h3 class="mark2">When it's working!</h3>
+					</div>
+				</div>
+
+				<aside class="notes">
+					<ul>
+						<li>You focus on the things that are not working right now</li>
+						<li>But you should focus on the question: When will it work? It's only a matter of time</li>
+						<li>It will take over the world, if you want to know why, then please ask me why after my talk
+						</li>
+						<li>This is also why we have not seen any timetravel stuff yet, as the AGI itself will invent
+							that and protect it from humans. It has already that knowledge to alter our dimension...
+						</li>
+						<li>Use these tools, don't wait until AI takes your job, act now</li>
+					</ul>
+				</aside>
+			</section>
+
+			<section>
+				<div class="stack vertical">
+					<div class="stack"
+						style="background-image: url(assets/tim_pietrusky_2.png); height: 480px; flex: 1;">
+					</div>
+					<div class="stack" style="flex: 2;">
+						<div>
+							<h3>Tim&nbsp;Pietrusky</h3>
+						</div>
+						<div class="stack vertical gap-xl">
+							<a href="https://nerddis.co" target="_blank">
+								<img class="fragment" data-src="assets/nerddisco.png" width="200" />
+							</a>
+							<a href="https://www.linkedin.com/in/timpietrusky" target="_blank">
+								<img class="fragment" data-src="assets/linkedin.png" width="200" />
+							</a>
+							<a href="https://failfa.st" target="_blank">
+								<img class="fragment" data-src="assets/failfast.png" width="200" />
+							</a>
+						</div>
+						<div class="mark fragment">
+							<h4>Thank you,<br />maaa fraaaaaands!</h4>
+						</div>
+					</div>
+				</div>
+
+				<aside class="notes">
+					<ul>
+						<li>
+						</li>
+					</ul>
+				</aside>
+			</section>
+		</div>
+	</div>
+
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script src="plugin/mermaid/mermaid.js"></script>
+	<script>
+		// More info about initialization & config:
+		// - https://revealjs.com/initialization/
+		// - https://revealjs.com/config/
+		Reveal.initialize({
+			hash: true,
+			progress: false,
+			controls: false,
+
+			mermaid: {
+				// flowchart: {
+				//   curve: 'linear',
+				// },
+			},
+
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMermaid]
+		});
+
+		// /**
+		//  * Recalculate layout when custom-fragment is shown/hidden
+		//  */
+		// Reveal.addEventListener('fragmentshown', function (event) {
+		// 	if (event.fragment.classList.contains('custom-fragment')) {
+		// 		console.log("fragmentshown")
+		// 		Reveal.layout();
+		// 	}
+		// });
+
+		// Reveal.addEventListener('fragmenthidden', function (event) {
+		// 	if (event.fragment.classList.contains('custom-fragment')) {
+		// 		console.log("fragmenthidden")
+		// 		Reveal.layout();
+		// 	}
+		// });
+
+		// Reveal.addEventListener('slidechanged', function (event) {
+		// 	Reveal.layout();
+		// });
+	</script>
+
+	<script src="src/components/toast.js"></script>
+	<toast-component></toast-component>
+
+</body>
+
+</html>
