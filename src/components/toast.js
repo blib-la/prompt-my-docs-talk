@@ -29,7 +29,7 @@ class ToastComponent extends HTMLElement {
                 .toast-container {
                     position: fixed;
                     bottom: 1rem;
-                    left: 1rem;
+                    right: 1rem;
                     z-index: 1000;
                     background-color: var(--toast-bg);
                     padding: 10px;
