@@ -26,7 +26,7 @@ Ever wished for a ChatGPT-like interaction tailored to your data? Join us as we 
 
 ## Past Events
 
-* 2023-08-31:[HH.js, CHECK24, Hamburg, Germany](https://failfa-st.github.io/prompt-my-docs-talk/hamburgjs-20230831)
+* 2023-08-31: [HH.js, CHECK24, Hamburg, Germany](https://failfa-st.github.io/prompt-my-docs-talk/hamburgjs-20230831)
   * Simplified the technical concept, explain how ChatGPT actually works under the hood
   * Switched from hyv to langchainjs
 * 2023-08-09: [KarlsruheJS, divae, Karlsruhe, Germany](https://failfa-st.github.io/prompt-my-docs-talk/karlsruhejs-20230809/)
