@@ -6,7 +6,9 @@
 
 - [Title](#title)
 - [Description](#description)
+- [ToDo](#todo)
 - [Past Events](#past-events)
+- [How to create an event](#how-to-create-an-event)
 
 <!-- tocstop -->
 
