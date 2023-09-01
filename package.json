@@ -1,17 +1,16 @@
 {
-  "name": "reveal.js",
-  "version": "4.5.0",
-  "description": "The HTML Presentation Framework",
-  "homepage": "https://revealjs.com",
-  "subdomain": "revealjs",
+  "name": "prompt-my-docs-talk",
+  "version": "2.0",
+  "description": "Prompt my Docs - The Talk",
+  "homepage": "https://github.com/failfa-st/prompt-my-docs-talk",
   "main": "dist/reveal.js",
   "module": "dist/reveal.esm.js",
-  "license": "MIT",
+  "license": "AGPL",
   "scripts": {
     "test": "gulp test",
     "start": "gulp serve",
     "build": "gulp build",
-    "package": "gulp package",
+    "package": "DEST_FOLDER=$npm_config_dest gulp package",
     "toc": "npx markdown-toc README.md -i"
   },
   "author": {
@@ -27,9 +26,13 @@
     "node": ">=10.0.0"
   },
   "keywords": [
-    "reveal",
-    "slides",
-    "presentation"
+    "ai",
+    "gpt",
+    "gpt-4",
+    "gpt-3-5-turbo",
+    "prompt",
+    "vector store",
+    "langchainjs"
   ],
   "devDependencies": {
     "@babel/core": "^7.14.3",

@@ -296,8 +296,12 @@ gulp.task("build", gulp.parallel("js", "css", "plugins"));
 
 gulp.task(
 	"package",
-	gulp.series(() =>
-		gulp
+	gulp.series(() => {
+		// Retrieve the folder name from command line arguments
+		const folderName = process.env.DEST_FOLDER || "defaultFolder";
+		const destination = `./docs/${folderName}/`;
+
+		return gulp
 			.src(
 				[
 					"./index.html",
@@ -310,8 +314,8 @@ gulp.task(
 				],
 				{ base: "./" }
 			)
-			.pipe(gulp.dest("./docs/karlsruhejs-20230809/"))
-	)
+			.pipe(gulp.dest(destination));
+	})
 );
 
 gulp.task("reload", () => gulp.src(["**/*.html", "**/*.md"]).pipe(connect.reload()));
